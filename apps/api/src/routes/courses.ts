@@ -29,6 +29,7 @@ coursesRouter.get('/:id', async (c) => {
   const db = drizzle(c.env.DB)
   const course = await db.select().from(courses).where(eq(courses.id, id)).get()
   if (!course) return c.json({ error: 'Not found' }, 404)
+  if (course.status === 'draft') return c.json({ error: 'Not found' }, 404)
   const videoList = await db.select().from(videos).where(eq(videos.course_id, id)).all()
   const result = { ...course, videos: videoList }
   await c.env.SESSIONS.put(cacheKey, JSON.stringify(result), { expirationTtl: 300 })

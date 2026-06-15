@@ -39,6 +39,7 @@ export async function getStreamSignedToken(
       body: JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600 }),
     },
   )
+  if (!res.ok) throw new Error(`Stream API error: ${res.status}`)
   const data = await res.json<{ result: { token: string } }>()
   return data.result.token
 }
