@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { getCookie } from 'hono/cookie'
 import { drizzle } from 'drizzle-orm/d1'
 import { eq } from 'drizzle-orm'
 import { users } from '../db/schema'
@@ -35,8 +36,13 @@ async function verifyPassword(password: string, stored: string): Promise<boolean
     { name: 'PBKDF2', hash: 'SHA-256', salt, iterations: 100000 },
     keyMaterial, 256,
   )
-  const computedHex = Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2, '0')).join('')
-  return computedHex === hashHex
+  const computed = new Uint8Array(bits)
+  const expected = new Uint8Array(hashHex.match(/.{2}/g)!.map(b => parseInt(b, 16)))
+  let match = true
+  for (let i = 0; i < computed.length; i++) {
+    if (computed[i] !== expected[i]) match = false
+  }
+  return match
 }
 
 auth.post('/register', async (c) => {
@@ -59,6 +65,7 @@ auth.post('/login', async (c) => {
   const { email, password, turnstileToken } = await c.req.json<{
     email: string; password: string; turnstileToken: string
   }>()
+  if (!email || !password) return c.json({ error: 'Missing fields' }, 400)
   const ok = await verifyTurnstile(turnstileToken, c.env.TURNSTILE_SECRET_KEY)
   if (!ok) return c.json({ error: 'Invalid captcha' }, 400)
   const db = drizzle(c.env.DB)
@@ -74,8 +81,7 @@ auth.post('/login', async (c) => {
 })
 
 auth.post('/logout', async (c) => {
-  const cookie = c.req.header('cookie') ?? ''
-  const token = cookie.split(';').map(p => p.trim()).find(p => p.startsWith('session='))?.split('=')[1]
+  const token = getCookie(c, 'session')
   if (token) await c.env.SESSIONS.delete(`session:${token}`)
   c.header('Set-Cookie', 'session=; HttpOnly; Path=/; Max-Age=0')
   return c.json({ data: { ok: true } })

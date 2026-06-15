@@ -1,4 +1,5 @@
 import { createMiddleware } from 'hono/factory'
+import { getCookie } from 'hono/cookie'
 import type { SessionUser } from '@demo/shared'
 import type { Env } from '../index'
 
@@ -22,8 +23,3 @@ export const adminMiddleware = createMiddleware<{
   if (user.role !== 'admin') return c.json({ error: 'Forbidden' }, 403)
   await next()
 })
-
-function getCookie(c: { req: { header: (key: string) => string | undefined } }, name: string): string | undefined {
-  const cookie = c.req.header('cookie') ?? ''
-  return cookie.split(';').map(p => p.trim()).find(p => p.startsWith(`${name}=`))?.split('=')[1]
-}
