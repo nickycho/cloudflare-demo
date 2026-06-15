@@ -1,6 +1,8 @@
 import { api } from '@/lib/api'
 import { StreamPlayer } from '@/components/StreamPlayer'
 import { LiveComments } from '@/components/LiveComments'
+import { AISummary } from '@/components/AISummary'
+import { AIChat } from '@/components/AIChat'
 import type { Video, ApiResponse } from '@demo/shared'
 import { notFound } from 'next/navigation'
 
@@ -20,12 +22,8 @@ export default async function VideoPage({ params }: { params: Promise<{ id: stri
       ) : (
         <p>影片處理中，請稍候...</p>
       )}
-      {video.summary && (
-        <section style={{ marginTop: 24 }}>
-          <h2>AI 摘要</h2>
-          <p>{video.summary}</p>
-        </section>
-      )}
+      {video.summary && <AISummary summary={video.summary} />}
+      <AIChat videoId={vid} />
       <LiveComments
         videoId={vid}
         userId="demo-user"
