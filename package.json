@@ -1,13 +1,16 @@
 {
   "name": "cloudflare-demo",
   "private": true,
+  "packageManager": "pnpm@11.3.0",
   "scripts": {
     "dev:api": "pnpm --filter api dev",
     "dev:web": "pnpm --filter web dev",
     "dev:realtime": "pnpm --filter realtime dev",
-    "dev:agent": "pnpm --filter agent dev"
+    "dev:agent": "pnpm --filter agent dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck"
   },
   "devDependencies": {
-    "typescript": "^5.7.0"
+    "typescript": "~5.7.0"
   }
 }

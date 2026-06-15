@@ -6,3 +6,6 @@ node_modules/
 .next/
 dist/
 .open-next/
+*.d1.sqlite
+.dev.vars
+*.tsbuildinfo
