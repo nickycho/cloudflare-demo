@@ -3,6 +3,8 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import type { D1Database, KVNamespace, R2Bucket } from '@cloudflare/workers-types'
 import { auth } from './routes/auth'
+import { coursesRouter } from './routes/courses'
+import { videosRouter } from './routes/videos'
 
 export type Env = {
   DB: D1Database
@@ -27,5 +29,7 @@ app.use('*', cors({
 app.get('/health', (c) => c.json({ ok: true }))
 
 app.route('/auth', auth)
+app.route('/courses', coursesRouter)
+app.route('/videos', videosRouter)
 
 export default app
