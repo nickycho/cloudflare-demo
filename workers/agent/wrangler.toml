@@ -1,0 +1,28 @@
+name = "cloudflare-demo-agent"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[durable_objects]
+bindings = [{ name = "VIDEO_PROCESSING_AGENT", class_name = "VideoProcessingAgent" }]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["VideoProcessingAgent"]
+
+[ai]
+binding = "AI"
+
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "video-content"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "demo-db"
+database_id = "REPLACE_WITH_REAL_ID"
+
+[vars]
+STREAM_ACCOUNT_ID = ""
+STREAM_API_TOKEN = ""
+AI_GATEWAY_URL = ""
