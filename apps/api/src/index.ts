@@ -6,6 +6,7 @@ import { auth } from './routes/auth'
 import { coursesRouter } from './routes/courses'
 import { videosRouter } from './routes/videos'
 import { aiRouter } from './routes/ai'
+import { enrollmentsRouter } from './routes/enrollments'
 
 export type Env = {
   DB: D1Database
@@ -33,5 +34,6 @@ app.route('/auth', auth)
 app.route('/courses', coursesRouter)
 app.route('/videos', videosRouter)
 app.route('/ai', aiRouter)
+app.route('/enrollments', enrollmentsRouter)
 
 export default app
