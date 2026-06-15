@@ -1,0 +1,24 @@
+{
+  "name": "web",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "deploy": "opennextjs-cloudflare build && wrangler pages deploy",
+    "preview": "opennextjs-cloudflare build && wrangler pages dev"
+  },
+  "dependencies": {
+    "next": "15.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@demo/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.3.0",
+    "wrangler": "^3.99.0",
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "typescript": "^5.7.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
+  }
+}
