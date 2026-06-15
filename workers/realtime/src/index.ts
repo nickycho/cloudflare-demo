@@ -48,8 +48,8 @@ export class ChatRoom extends DurableObject {
     // 更新歷史（最多 50 則）
     this.ctx.storage.get<ChatMessage[]>('history').then(history => {
       const updated = [...(history ?? []), msg].slice(-50)
-      this.ctx.storage.put('history', updated)
-    })
+      return this.ctx.storage.put('history', updated)
+    }).catch(err => console.error('Failed to update history:', err))
   }
 
   webSocketClose(ws: WebSocket): void {
