@@ -5,6 +5,7 @@ import type { D1Database, KVNamespace, R2Bucket } from '@cloudflare/workers-type
 import { auth } from './routes/auth'
 import { coursesRouter } from './routes/courses'
 import { videosRouter } from './routes/videos'
+import { aiRouter } from './routes/ai'
 
 export type Env = {
   DB: D1Database
@@ -31,5 +32,6 @@ app.get('/health', (c) => c.json({ ok: true }))
 app.route('/auth', auth)
 app.route('/courses', coursesRouter)
 app.route('/videos', videosRouter)
+app.route('/ai', aiRouter)
 
 export default app
