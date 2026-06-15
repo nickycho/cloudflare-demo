@@ -31,9 +31,11 @@ export function LiveComments({ videoId, userId, userName, realtimeUrl }: Props) 
     ws.onopen = () => setConnected(true)
     ws.onclose = () => setConnected(false)
     ws.onmessage = (e: MessageEvent) => {
-      const data = JSON.parse(e.data as string)
-      if (data.type === 'history') setMessages(data.messages)
-      else if (data.type === 'message') setMessages(prev => [...prev, data.message])
+      try {
+        const data = JSON.parse(e.data as string)
+        if (data.type === 'history') setMessages(data.messages)
+        else if (data.type === 'message') setMessages(prev => [...prev, data.message])
+      } catch {}
     }
 
     return () => { ws.close() }
