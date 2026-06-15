@@ -1,5 +1,6 @@
 import { api } from '@/lib/api'
 import { StreamPlayer } from '@/components/StreamPlayer'
+import { LiveComments } from '@/components/LiveComments'
 import type { Video, ApiResponse } from '@demo/shared'
 import { notFound } from 'next/navigation'
 
@@ -25,6 +26,12 @@ export default async function VideoPage({ params }: { params: Promise<{ id: stri
           <p>{video.summary}</p>
         </section>
       )}
+      <LiveComments
+        videoId={vid}
+        userId="demo-user"
+        userName="學員"
+        realtimeUrl={process.env.NEXT_PUBLIC_REALTIME_URL ?? 'ws://localhost:8788'}
+      />
     </main>
   )
 }
