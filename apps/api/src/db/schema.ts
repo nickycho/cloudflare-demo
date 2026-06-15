@@ -1,5 +1,5 @@
 // apps/api/src/db/schema.ts
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core'
 
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
@@ -36,7 +36,9 @@ export const enrollments = sqliteTable('enrollments', {
   user_id: text('user_id').notNull().references(() => users.id),
   course_id: text('course_id').notNull().references(() => courses.id),
   enrolled_at: integer('enrolled_at').notNull(),
-})
+}, (t) => ({
+  pk: primaryKey({ columns: [t.user_id, t.course_id] }),
+}))
 
 export const watchProgress = sqliteTable('watch_progress', {
   user_id: text('user_id').notNull().references(() => users.id),
@@ -44,4 +46,6 @@ export const watchProgress = sqliteTable('watch_progress', {
   progress_sec: integer('progress_sec').notNull().default(0),
   completed: integer('completed', { mode: 'boolean' }).notNull().default(false),
   last_watched_at: integer('last_watched_at').notNull(),
-})
+}, (t) => ({
+  pk: primaryKey({ columns: [t.user_id, t.video_id] }),
+}))
