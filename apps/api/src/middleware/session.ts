@@ -23,3 +23,9 @@ export const adminMiddleware = createMiddleware<{
   if (user.role !== 'admin') return c.json({ error: 'Forbidden' }, 403)
   await next()
 })
+
+export const accessMiddleware = createMiddleware<{ Bindings: Env }>(async (c, next) => {
+  const cfAccessJwt = c.req.header('cf-access-jwt-assertion')
+  if (!cfAccessJwt) return c.json({ error: 'Missing Access token' }, 401)
+  await next()
+})
