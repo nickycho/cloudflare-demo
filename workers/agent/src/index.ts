@@ -29,7 +29,7 @@ function chunkText(text: string): string[] {
 export class VideoProcessingAgent extends Agent<Env> {
   async fetch(request: Request): Promise<Response> {
     const { videoId, streamVideoId } = await request.json<{ videoId: string; streamVideoId: string }>()
-    await this.processVideo(videoId, streamVideoId)
+    this.ctx.waitUntil(this.processVideo(videoId, streamVideoId))
     return new Response('ok')
   }
 
