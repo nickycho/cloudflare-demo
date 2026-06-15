@@ -12,8 +12,13 @@ async function request<T>(
       ...options?.headers,
     },
   })
-  const json = await res.json()
-  if (!res.ok) throw new Error(json.error ?? 'Request failed')
+  let json: Record<string, unknown>
+  try {
+    json = await res.json()
+  } catch {
+    throw new Error(`HTTP ${res.status}: ${res.statusText}`)
+  }
+  if (!res.ok) throw new Error((json.error as string) ?? 'Request failed')
   return json as T
 }
 
