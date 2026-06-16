@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { TurnstileWidget } from '@/components/TurnstileWidget'
 import { register } from '@/lib/auth'
 
-const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA'
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'
 
 export default function RegisterPage() {
   const router = useRouter()

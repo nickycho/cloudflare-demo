@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { TurnstileWidget } from '@/components/TurnstileWidget'
 import { login } from '@/lib/auth'
 
-const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA'
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'
 
 function LoginForm() {
   const router = useRouter()
