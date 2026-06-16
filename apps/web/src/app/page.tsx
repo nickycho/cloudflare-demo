@@ -5,8 +5,13 @@ import type { Course, ApiResponse } from '@demo/shared'
 export const revalidate = 300
 
 export default async function HomePage() {
-  const res = await api.get<ApiResponse<Course[]>>('/courses')
-  const courseList = res.data ?? []
+  let courseList: Course[] = []
+  try {
+    const res = await api.get<ApiResponse<Course[]>>('/courses')
+    courseList = res.data ?? []
+  } catch {
+    // build 時 API 無法連線，顯示空列表
+  }
   return (
     <main style={{ maxWidth: 960, margin: '0 auto', padding: 24 }}>
       <h1>所有課程</h1>
