@@ -80,7 +80,9 @@ jobs:
           NEXT_PUBLIC_REALTIME_URL: ${{ secrets.NEXT_PUBLIC_REALTIME_URL }}
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
       - name: Deploy Web to Pages
-        run: pnpm --filter web exec wrangler pages deploy .open-next/assets --project-name cloudflare-demo-web --branch main
+        run: |
+          cp apps/web/.open-next/worker.js apps/web/.open-next/assets/_worker.js
+          pnpm --filter web exec wrangler pages deploy .open-next/assets --project-name cloudflare-demo-web --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
