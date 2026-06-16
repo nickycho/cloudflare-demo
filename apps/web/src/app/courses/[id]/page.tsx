@@ -3,7 +3,7 @@ import { VideoList } from '@/components/VideoList'
 import type { Course, Video, ApiResponse } from '@demo/shared'
 import { notFound } from 'next/navigation'
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
 
 export default async function CoursePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

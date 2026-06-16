@@ -2,7 +2,7 @@ import { api } from '@/lib/api'
 import { CourseCard } from '@/components/CourseCard'
 import type { Course, ApiResponse } from '@demo/shared'
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   let courseList: Course[] = []

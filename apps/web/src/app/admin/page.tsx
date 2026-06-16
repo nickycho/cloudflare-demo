@@ -63,7 +63,9 @@ export default function AdminPage() {
           <tbody>
             {courses.map(c => (
               <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '8px 0' }}>{c.title}</td>
+                <td style={{ padding: '8px 0' }}>
+                  <a href={`/courses/${c.id}`} style={{ color: 'inherit' }}>{c.title}</a>
+                </td>
                 <td style={{ padding: '8px 0' }}>
                   <span style={{
                     padding: '2px 8px', borderRadius: 4, fontSize: 12,
