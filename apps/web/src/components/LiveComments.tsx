@@ -1,6 +1,8 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8787'
+
 interface ChatMessage {
   id: string
   userId: string
@@ -11,17 +13,29 @@ interface ChatMessage {
 
 interface Props {
   videoId: string
-  userId: string
-  userName: string
   realtimeUrl: string
 }
 
-export function LiveComments({ videoId, userId, userName, realtimeUrl }: Props) {
+export function LiveComments({ videoId, realtimeUrl }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [connected, setConnected] = useState(false)
+  const [userId, setUserId] = useState('anonymous')
+  const [userName, setUserName] = useState('訪客')
   const wsRef = useRef<WebSocket | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    fetch(`${API_URL}/auth/me`, { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then((data: { data?: { id: string; name: string } } | null) => {
+        if (data?.data) {
+          setUserId(data.data.id)
+          setUserName(data.data.name)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     const url = `${realtimeUrl}/room/${videoId}?userId=${encodeURIComponent(userId)}&userName=${encodeURIComponent(userName)}`

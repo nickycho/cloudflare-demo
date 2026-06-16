@@ -1,13 +1,14 @@
 'use client'
-import { useState, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useCallback, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { TurnstileWidget } from '@/components/TurnstileWidget'
 import { login } from '@/lib/auth'
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [turnstileToken, setTurnstileToken] = useState('')
@@ -18,7 +19,8 @@ export default function LoginPage() {
     if (!turnstileToken) { setError('請完成驗證'); return }
     try {
       await login(email, password, turnstileToken)
-      router.push('/')
+      const redirect = searchParams.get('redirect') ?? '/'
+      router.push(redirect)
     } catch (err) {
       setError(err instanceof Error ? err.message : '登入失敗')
     }
@@ -38,5 +40,13 @@ export default function LoginPage() {
       </form>
       <p><a href="/auth/register">還沒有帳號？註冊</a></p>
     </main>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   )
 }

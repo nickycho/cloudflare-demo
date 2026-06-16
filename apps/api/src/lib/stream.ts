@@ -7,6 +7,7 @@ export async function createStreamUploadUrl(
   accountId: string,
   apiToken: string,
   videoName: string,
+  fileSize: number,
 ): Promise<StreamUploadResponse> {
   const res = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${accountId}/stream?direct_user=true`,
@@ -15,7 +16,7 @@ export async function createStreamUploadUrl(
       headers: {
         Authorization: `Bearer ${apiToken}`,
         'Tus-Resumable': '1.0.0',
-        'Upload-Length': '0',
+        'Upload-Length': String(fileSize),
         'Upload-Metadata': `name ${btoa(videoName)}`,
       },
     },

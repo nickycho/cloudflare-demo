@@ -24,7 +24,12 @@ export type Env = {
 const app = new Hono<{ Bindings: Env }>()
 
 app.use('*', cors({
-  origin: ['http://localhost:3000', 'https://your-pages-domain.pages.dev'],
+  origin: (origin) => {
+    if (!origin) return '*'
+    if (origin.startsWith('http://localhost:')) return origin
+    if (origin.endsWith('.pages.dev')) return origin
+    return null
+  },
   credentials: true,
 }))
 

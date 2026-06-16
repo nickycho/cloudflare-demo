@@ -19,15 +19,17 @@ export default async function VideoPage({ params }: { params: Promise<{ id: stri
       <h1>{video.title}</h1>
       {video.streamToken ? (
         <StreamPlayer streamToken={video.streamToken} />
+      ) : video.status === 'ready' ? (
+        <p style={{ color: '#64748b', padding: '16px', background: '#f8fafc', borderRadius: 8 }}>
+          影片已就緒，但本地開發模式下無法播放（需設定 Cloudflare Stream 憑證）
+        </p>
       ) : (
-        <p>影片處理中，請稍候...</p>
+        <p style={{ color: '#64748b' }}>影片處理中，請稍候...</p>
       )}
       {video.summary && <AISummary summary={video.summary} />}
       <AIChat videoId={vid} />
       <LiveComments
         videoId={vid}
-        userId="demo-user"
-        userName="學員"
         realtimeUrl={process.env.NEXT_PUBLIC_REALTIME_URL ?? 'ws://localhost:8788'}
       />
     </main>

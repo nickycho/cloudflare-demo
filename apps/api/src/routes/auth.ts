@@ -4,10 +4,11 @@ import { drizzle } from 'drizzle-orm/d1'
 import { eq } from 'drizzle-orm'
 import { users } from '../db/schema'
 import { verifyTurnstile } from '../lib/turnstile'
+import { sessionMiddleware } from '../middleware/session'
 import type { Env } from '../index'
 import type { SessionUser } from '@demo/shared'
 
-const auth = new Hono<{ Bindings: Env }>()
+const auth = new Hono<{ Bindings: Env; Variables: { user: SessionUser } }>()
 
 function nanoid(): string {
   return crypto.randomUUID().replace(/-/g, '')
@@ -80,11 +81,27 @@ auth.post('/login', async (c) => {
   return c.json({ data: sessionUser })
 })
 
+auth.get('/me', sessionMiddleware, async (c) => {
+  return c.json({ data: c.get('user') })
+})
+
 auth.post('/logout', async (c) => {
   const token = getCookie(c, 'session')
   if (token) await c.env.SESSIONS.delete(`session:${token}`)
   c.header('Set-Cookie', 'session=; HttpOnly; Path=/; Max-Age=0')
   return c.json({ data: { ok: true } })
+})
+
+// Dev-only：將已存在的使用者提升為 admin（只在 TURNSTILE_SECRET_KEY 未設定時可用）
+auth.post('/dev/make-admin', async (c) => {
+  if (c.env.TURNSTILE_SECRET_KEY) return c.json({ error: 'Not available in production' }, 403)
+  const { email } = await c.req.json<{ email: string }>()
+  if (!email) return c.json({ error: 'Missing email' }, 400)
+  const db = drizzle(c.env.DB)
+  const user = await db.select().from(users).where(eq(users.email, email)).get()
+  if (!user) return c.json({ error: 'User not found' }, 404)
+  await db.update(users).set({ role: 'admin' }).where(eq(users.email, email))
+  return c.json({ data: { ok: true, email, role: 'admin' } })
 })
 
 export { auth }

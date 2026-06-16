@@ -11,20 +11,43 @@ const videosRouter = new Hono<{ Bindings: Env; Variables: { user: SessionUser } 
 
 function nanoid() { return crypto.randomUUID().replace(/-/g, '') }
 
+// PATCH /videos/mock-upload — 本地開發用，接受 TUS PATCH 但不實際儲存
+videosRouter.on(['GET', 'HEAD', 'PATCH'], '/mock-upload', (c) => {
+  return new Response(null, {
+    status: 204,
+    headers: { 'Upload-Offset': c.req.header('Upload-Length') ?? '0' },
+  })
+})
+
 // POST /videos/upload-url — Admin 取得 Stream TUS 上傳 URL
 videosRouter.post('/upload-url', sessionMiddleware, adminMiddleware, async (c) => {
-  const { courseId, title } = await c.req.json<{ courseId: string; title: string }>()
+  const { courseId, title, fileSize } = await c.req.json<{ courseId: string; title: string; fileSize?: number }>()
   if (!courseId || !title) return c.json({ error: 'Missing fields' }, 400)
+
+  const db = drizzle(c.env.DB)
+  const id = nanoid()
+  const now = Date.now()
+
+  if (!c.env.STREAM_ACCOUNT_ID) {
+    // 本地開發 mock：無 Stream 設定時，直接建立 ready 狀態影片
+    const streamVideoId = nanoid()
+    await db.insert(videos).values({
+      id, course_id: courseId, title, order: 0,
+      stream_video_id: streamVideoId, status: 'ready', created_at: now,
+    })
+    const origin = new URL(c.req.url).origin
+    return c.json({ data: { videoId: id, streamVideoId, uploadURL: `${origin}/videos/mock-upload` } }, 201)
+  }
+
   const { uid, uploadURL } = await createStreamUploadUrl(
     c.env.STREAM_ACCOUNT_ID,
     c.env.STREAM_API_TOKEN,
     title,
+    fileSize ?? 0,
   )
-  const db = drizzle(c.env.DB)
-  const id = nanoid()
   await db.insert(videos).values({
     id, course_id: courseId, title, order: 0,
-    stream_video_id: uid, status: 'processing', created_at: Date.now(),
+    stream_video_id: uid, status: 'processing', created_at: now,
   })
   return c.json({ data: { videoId: id, streamVideoId: uid, uploadURL } }, 201)
 })
@@ -42,11 +65,11 @@ videosRouter.post('/:id/publish', sessionMiddleware, adminMiddleware, async (c) 
       body: JSON.stringify({ videoId: id, streamVideoId: video.stream_video_id }),
     }).catch(() => {})
   }
-  return c.json({ data: { status: 'processing' } }, 202)
+  return c.json({ data: { status: video.status } }, 202)
 })
 
-// GET /videos/:id — 含 Stream signed token
-videosRouter.get('/:id', sessionMiddleware, async (c) => {
+// GET /videos/:id — 含 Stream signed token（公開端點，Stream token 本身有 access control）
+videosRouter.get('/:id', async (c) => {
   const id = c.req.param('id')
   const db = drizzle(c.env.DB)
   const video = await db.select().from(videos).where(eq(videos.id, id)).get()

@@ -20,6 +20,13 @@ coursesRouter.get('/', async (c) => {
   return c.json({ data: list })
 })
 
+// GET /courses/admin — 管理員取得所有課程（含 draft）— 必須在 /:id 之前
+coursesRouter.get('/admin', sessionMiddleware, adminMiddleware, async (c) => {
+  const db = drizzle(c.env.DB)
+  const list = await db.select().from(courses).all()
+  return c.json({ data: list })
+})
+
 // GET /courses/:id — 含影片列表
 coursesRouter.get('/:id', async (c) => {
   const id = c.req.param('id')

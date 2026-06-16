@@ -26,7 +26,7 @@ export function VideoUploader({ courseId, onUploaded }: Props) {
     setUploading(true)
     setError('')
     try {
-      const res = await api.post<ApiResponse<UploadUrlResponse>>('/videos/upload-url', { courseId, title })
+      const res = await api.post<ApiResponse<UploadUrlResponse>>('/videos/upload-url', { courseId, title, fileSize: file.size })
       const { videoId, uploadURL } = res.data!
 
       // 使用 XHR PATCH 實作 TUS 上傳至 Stream
@@ -36,6 +36,7 @@ export function VideoUploader({ courseId, onUploaded }: Props) {
         xhr.setRequestHeader('Content-Type', 'application/offset+octet-stream')
         xhr.setRequestHeader('Tus-Resumable', '1.0.0')
         xhr.setRequestHeader('Upload-Offset', '0')
+        xhr.setRequestHeader('Upload-Length', String(file.size))
         xhr.upload.onprogress = (e) => { if (e.lengthComputable) setProgress(Math.round(e.loaded / e.total * 100)) }
         xhr.onload = () => xhr.status < 300 ? resolve() : reject(new Error(`Upload failed: ${xhr.status}`))
         xhr.onerror = () => reject(new Error('Upload error'))
