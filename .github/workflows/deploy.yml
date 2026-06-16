@@ -86,6 +86,7 @@ jobs:
             name=$(basename "$dir")
             [ "$name" != "assets" ] && cp -r "$dir" "apps/web/.open-next/assets/$name"
           done
+          [ -d apps/web/.build ] && cp -r apps/web/.build apps/web/.open-next/assets/.build
           pnpm --filter web exec wrangler pages deploy .open-next/assets --project-name cloudflare-demo-web --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
