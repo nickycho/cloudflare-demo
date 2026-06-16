@@ -7,4 +7,5 @@ compatibility_flags = ["nodejs_compat"]
 directory = ".open-next/assets"
 
 [vars]
-NEXT_PUBLIC_API_URL = "http://localhost:8787"
+NEXT_PUBLIC_API_URL = "https://cloudflare-demo-api.nickycho.workers.dev"
+NEXT_PUBLIC_REALTIME_URL = "wss://cloudflare-demo-realtime.nickycho.workers.dev"
