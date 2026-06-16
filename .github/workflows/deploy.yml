@@ -82,11 +82,8 @@ jobs:
       - name: Deploy Web to Pages
         run: |
           cp apps/web/.open-next/worker.js apps/web/.open-next/assets/_worker.js
-          for dir in apps/web/.open-next/*/; do
-            name=$(basename "$dir")
-            [ "$name" != "assets" ] && cp -r "$dir" "apps/web/.open-next/assets/$name"
-          done
-          [ -d apps/web/.build ] && cp -r apps/web/.build apps/web/.open-next/assets/.build
+          find apps/web/.open-next -maxdepth 1 -mindepth 1 -type d ! -name assets \
+            -exec cp -r {} apps/web/.open-next/assets/ \;
           pnpm --filter web exec wrangler pages deploy .open-next/assets --project-name cloudflare-demo-web --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
