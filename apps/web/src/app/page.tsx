@@ -10,7 +10,7 @@ export default async function HomePage() {
     const res = await api.get<ApiResponse<Course[]>>('/courses')
     courseList = res.data ?? []
   } catch {
-    // build 時 API 無法連線，顯示空列表
+    // API 無法連線時顯示空列表
   }
   return (
     <main style={{ maxWidth: 960, margin: '0 auto', padding: 24 }}>
