@@ -81,11 +81,12 @@ jobs:
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
       - name: Deploy Web to Pages
         run: |
-          mkdir -p apps/web/.deploy
-          cp -r apps/web/.open-next/assets/. apps/web/.deploy/
-          cp apps/web/.open-next/worker.js apps/web/.deploy/_worker.js
-          cp -r apps/web/.open-next/cloudflare apps/web/.deploy/cloudflare
-          pnpm --filter web exec wrangler pages deploy .deploy --project-name cloudflare-demo-web --branch main
+          cp apps/web/.open-next/worker.js apps/web/.open-next/assets/_worker.js
+          for dir in apps/web/.open-next/*/; do
+            name=$(basename "$dir")
+            [ "$name" != "assets" ] && cp -r "$dir" "apps/web/.open-next/assets/$name"
+          done
+          pnpm --filter web exec wrangler pages deploy .open-next/assets --project-name cloudflare-demo-web --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
