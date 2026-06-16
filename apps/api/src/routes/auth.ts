@@ -77,8 +77,8 @@ auth.post('/login', async (c) => {
   const token = nanoid()
   const sessionUser: SessionUser = { id: user.id, email: user.email, name: user.name, role: user.role }
   await c.env.SESSIONS.put(`session:${token}`, JSON.stringify(sessionUser), { expirationTtl: 60 * 60 * 24 * 7 })
-  c.header('Set-Cookie', `session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${60 * 60 * 24 * 7}`)
-  return c.json({ data: sessionUser })
+  c.header('Set-Cookie', `session=${token}; HttpOnly; SameSite=None; Path=/; Max-Age=${60 * 60 * 24 * 7}; Secure`)
+  return c.json({ data: { ...sessionUser, token } })
 })
 
 auth.get('/me', sessionMiddleware, async (c) => {
@@ -88,7 +88,7 @@ auth.get('/me', sessionMiddleware, async (c) => {
 auth.post('/logout', async (c) => {
   const token = getCookie(c, 'session')
   if (token) await c.env.SESSIONS.delete(`session:${token}`)
-  c.header('Set-Cookie', 'session=; HttpOnly; Path=/; Max-Age=0')
+  c.header('Set-Cookie', 'session=; HttpOnly; SameSite=None; Path=/; Max-Age=0; Secure')
   return c.json({ data: { ok: true } })
 })
 
