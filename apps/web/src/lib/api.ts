@@ -1,12 +1,15 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8787'
 
+// Server-side (Worker) doesn't need credentials; browser fetches do
+const isServer = typeof window === 'undefined'
+
 async function request<T>(
   path: string,
   options?: RequestInit,
 ): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
-    credentials: 'include',
+    ...(isServer ? {} : { credentials: 'include' }),
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
