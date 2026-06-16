@@ -1,2 +1,12 @@
-// apps/web/open-next.config.ts
-export default {}
+import type { OpenNextConfig } from '@opennextjs/cloudflare'
+
+const config: OpenNextConfig = {
+  default: {
+    override: {
+      wrapper: 'cloudflare-node',
+      converter: 'edge',
+    },
+  },
+}
+
+export default config
