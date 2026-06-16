@@ -2,6 +2,7 @@ name = "cloudflare-demo-api"
 main = "src/index.ts"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
+account_id = "e2c5f98632ce2f5974707c3b11ef5000"
 
 [[d1_databases]]
 binding = "DB"
