@@ -30,4 +30,9 @@ index_name = "video-content"
 [vars]
 STREAM_ACCOUNT_ID = "e2c5f98632ce2f5974707c3b11ef5000"
 REALTIME_WORKER_URL = ""
-AGENT_WORKER_URL = "https://cloudflare-demo-agent.nickycho.workers.dev"
+
+# 透過 service binding 觸發 agent worker（內網呼叫，免公開 URL、免認證 token）。
+# agent 已關閉 workers.dev 公開存取，只能經此 binding 觸發。
+[[services]]
+binding = "AGENT"
+service = "cloudflare-demo-agent"

@@ -18,7 +18,7 @@ export type Env = {
   STREAM_ACCOUNT_ID: string
   STREAM_API_TOKEN: string
   REALTIME_WORKER_URL: string
-  AGENT_WORKER_URL: string
+  AGENT: Fetcher
 }
 
 const app = new Hono<{ Bindings: Env }>()

@@ -4,6 +4,9 @@ compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
 account_id = "e2c5f98632ce2f5974707c3b11ef5000"
 
+# 關閉公開 workers.dev 存取，只允許 api worker 經 service binding 內網觸發。
+workers_dev = false
+
 [durable_objects]
 bindings = [{ name = "VIDEO_PROCESSING_AGENT", class_name = "VideoProcessingAgent" }]
 

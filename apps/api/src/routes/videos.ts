@@ -64,12 +64,14 @@ videosRouter.post('/:id/publish', sessionMiddleware, adminMiddleware, async (c) 
   const db = drizzle(c.env.DB)
   const video = await db.select().from(videos).where(eq(videos.id, id)).get()
   if (!video) return c.json({ error: 'Not found' }, 404)
-  if (c.env.AGENT_WORKER_URL) {
-    fetch(c.env.AGENT_WORKER_URL, {
+  // 透過 service binding 觸發 agent（內網呼叫，agent 不需公開 URL）。
+  // 本地 dev 單獨跑 api 時 binding 可能不存在，故保留 guard 優雅降級。
+  if (c.env.AGENT) {
+    c.env.AGENT.fetch(new Request('https://agent/process', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ videoId: id, streamVideoId: video.stream_video_id }),
-    }).catch(() => {})
+    })).catch(() => {})
   }
   return c.json({ data: { status: video.status } }, 202)
 })
