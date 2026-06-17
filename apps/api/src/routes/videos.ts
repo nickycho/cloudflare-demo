@@ -39,12 +39,18 @@ videosRouter.post('/upload-url', sessionMiddleware, adminMiddleware, async (c) =
     return c.json({ data: { videoId: id, streamVideoId, uploadURL: `${origin}/videos/mock-upload` } }, 201)
   }
 
-  const { uid, uploadURL } = await createStreamUploadUrl(
-    c.env.STREAM_ACCOUNT_ID,
-    c.env.STREAM_API_TOKEN,
-    title,
-    fileSize ?? 0,
-  )
+  let uid: string, uploadURL: string
+  try {
+    ({ uid, uploadURL } = await createStreamUploadUrl(
+      c.env.STREAM_ACCOUNT_ID,
+      c.env.STREAM_API_TOKEN,
+      title,
+      fileSize ?? 0,
+    ))
+  } catch (err) {
+    console.error('[videos/upload-url] Stream error:', err)
+    return c.json({ error: err instanceof Error ? err.message : 'Stream upload init failed' }, 502)
+  }
   await db.insert(videos).values({
     id, course_id: courseId, title, order: 0,
     stream_video_id: uid, status: 'processing', created_at: now,

@@ -23,7 +23,7 @@ binding = "DB"
 database_name = "demo-db"
 database_id = "af9bee6a-c1b5-426e-ac21-a53898ac6f38"
 
+# STREAM_API_TOKEN 為敏感值，用 `wrangler secret put` 設定，不要放進 [vars]。
 [vars]
-STREAM_ACCOUNT_ID = ""
-STREAM_API_TOKEN = ""
+STREAM_ACCOUNT_ID = "e2c5f98632ce2f5974707c3b11ef5000"
 AI_GATEWAY_URL = ""

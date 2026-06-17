@@ -25,9 +25,9 @@ binding = "AI"
 binding = "VECTORIZE"
 index_name = "video-content"
 
+# STREAM_API_TOKEN 與 TURNSTILE_SECRET_KEY 為敏感值，用 `wrangler secret put` 設定，
+# 不要放進 [vars]（deploy 時 [vars] 的空字串會覆蓋掉 secret）。
 [vars]
-TURNSTILE_SECRET_KEY = ""
-STREAM_ACCOUNT_ID = ""
-STREAM_API_TOKEN = ""
+STREAM_ACCOUNT_ID = "e2c5f98632ce2f5974707c3b11ef5000"
 REALTIME_WORKER_URL = ""
-AGENT_WORKER_URL = ""
+AGENT_WORKER_URL = "https://cloudflare-demo-agent.nickycho.workers.dev"
